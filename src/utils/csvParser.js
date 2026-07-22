@@ -1,0 +1,124 @@
+import Papa from 'papaparse';
+
+export const loadProducts = async () => {
+  return new Promise((resolve, reject) => {
+    const csvPath = `${import.meta.env.BASE_URL}products.csv`;
+    Papa.parse(csvPath, {
+      download: true,
+      header: true,
+      complete: (results) => {
+        const rawData = results.data;
+        const productsMap = new Map();
+
+        rawData.forEach(row => {
+          if (!row.Handle) return; // Skip empty rows
+
+          // If product doesn't exist yet, create it
+          if (!productsMap.has(row.Handle)) {
+            productsMap.set(row.Handle, {
+              id: row.Handle,
+              title: row.Title,
+              description: row['Body (HTML)'],
+              vendor: row.Vendor,
+              category: row['Product Category'],
+              type: row.Type,
+              tags: row.Tags ? row.Tags.split(',').map(t => t.trim()) : [],
+              variants: [],
+              images: new Set(),
+              optionNames: [row['Option1 Name'], row['Option2 Name'], row['Option3 Name']],
+              options: {
+                [row['Option1 Name']]: new Set(),
+                [row['Option2 Name']]: new Set(),
+                [row['Option3 Name']]: new Set(),
+              }
+            });
+          }
+
+          const product = productsMap.get(row.Handle);
+          
+          // Add Variant
+          const variant = {
+            sku: row['Variant SKU'],
+            price: parseFloat(row['Variant Price']) || 0,
+            grams: parseFloat(row['Variant Grams']) || 0,
+            image: row['Variant Image'] || row['Image Src'],
+            option1: row['Option1 Value'],
+            option2: row['Option2 Value'],
+            option3: row['Option3 Value'],
+          };
+          product.variants.push(variant);
+
+          // Add unique options using tracked optionNames
+          const optNames = product.optionNames;
+          if (optNames[0] && row['Option1 Value']) product.options[optNames[0]].add(row['Option1 Value']);
+          if (optNames[1] && row['Option2 Value']) product.options[optNames[1]].add(row['Option2 Value']);
+          if (optNames[2] && row['Option3 Value']) product.options[optNames[2]].add(row['Option3 Value']);
+
+          // Add Images
+          if (row['Image Src']) {
+            product.images.add(row['Image Src']);
+          }
+          if (row['Variant Image']) {
+            product.images.add(row['Variant Image']);
+          }
+        });
+
+        // Clean up Maps and Sets to Arrays
+        const products = Array.from(productsMap.values()).map(p => {
+          const cleanOptions = {};
+          Object.keys(p.options).forEach(key => {
+            if (key && key !== 'undefined') {
+              const values = Array.from(p.options[key]).filter(v => v);
+              if (values.length > 0) {
+                cleanOptions[key] = values;
+              }
+            }
+          });
+
+          // Check if product is NOT Jig de Olho and should have standard 13 colors
+          const isJigDeOlho = (p.id && p.id.toLowerCase().includes('jig-head-de-olho')) || (p.title && p.title.toLowerCase().includes('jig de olho'));
+          
+          if (!isJigDeOlho) {
+            cleanOptions['Cor'] = [
+              'Branco Perola',
+              'Glow',
+              'Rapadura',
+              'Roxo Estrelar',
+              'Vermelho Holográfico',
+              'Véu Da Noite',
+              'Amarelo Neon',
+              'Laranja Neon',
+              'Preto Brilhante',
+              'Capim Rubi',
+              'Verde Neon',
+              'Pastel',
+              'Chá'
+            ];
+          }
+
+          // Sort images to have a consistent main image
+          const imagesArr = Array.from(p.images).filter(i => i);
+          
+          // Try to set a good main image if missing
+          if (imagesArr.length === 0 && p.variants.length > 0) {
+             const firstWithImage = p.variants.find(v => v.image);
+             if (firstWithImage) imagesArr.push(firstWithImage.image);
+          }
+
+          return {
+            ...p,
+            options: cleanOptions,
+            images: imagesArr,
+            minPrice: Math.min(...p.variants.filter(v => v.price > 0).map(v => v.price)),
+            maxPrice: Math.max(...p.variants.filter(v => v.price > 0).map(v => v.price)),
+          };
+        });
+
+        resolve(products);
+      },
+      error: (error) => {
+        reject(error);
+      }
+    });
+  });
+};
