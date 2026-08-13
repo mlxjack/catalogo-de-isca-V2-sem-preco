@@ -1,0 +1,45 @@
+IMAGENS DO E-MAIL "PROMOÇÃO DAS CORES"
+=======================================
+
+7 arquivos, 473 KB no total (as originais somavam 2,4 MB — 82% menor).
+Todas já vêm cortadas, redimensionadas e com fundo branco puro (#FFFFFF),
+para encaixarem sem "caixa" visível nos cards brancos do e-mail.
+
+ARQUIVO                          TAMANHO   ONDE APARECE
+------------------------------   -------   ----------------------------------
+logo-header.png                  400x163   topo do e-mail (exibido a 200px)
+hero-viperbug-amarelo-neon.png   760x400   foto grande de destaque
+card-preto-brilhante.png         360x300   card 1 — isca Claw Strike
+card-amarelo-neon.png            360x300   card 2 — isca Lagartixa
+card-glow.png                    360x300   card 3 — isca AjiEgg
+card-branco-perola.png           360x300   card 4 — isca Vibraworm
+logo-footer.png                  260x106   rodapé (exibido a 130px)
+
+Os logos já vêm achatados sobre o verde escuro #0a1410 (o fundo do e-mail),
+em vez de PNG transparente — assim nenhum cliente antigo de e-mail mostra
+caixa cinza ou preta atrás deles.
+
+
+COMO PUBLICAR
+-------------
+
+Opção A (mais simples) — servir pelo domínio de vocês:
+  1. copie esta pasta para  public/email/promocao-cores/
+     no repo  catalogo-de-isca-V2-sem-preco
+  2. commit + push (GitHub Pages publica sozinho)
+  3. pronto: o HTML do e-mail já aponta para
+     https://iscas.chumbada.com.br/email/promocao-cores/
+
+Opção B — qualquer outro CDN ou a biblioteca de imagens do seu ESP:
+  suba os 7 arquivos e faça um localizar-e-substituir em
+  email-promocao-das-cores.html trocando
+     https://iscas.chumbada.com.br/email/promocao-cores/
+  pela URL base de onde ficaram.
+
+
+ORIGEM
+------
+Fotos tiradas do catálogo de iscas (public/iscas_cores/ do repo
+catalogo-de-isca-V2-sem-preco). As 4 cores da promoção existem em todos
+os 67 modelos do catálogo, então dá pra trocar as iscas dos cards à
+vontade — basta pegar outra pasta e repetir o mesmo corte.
