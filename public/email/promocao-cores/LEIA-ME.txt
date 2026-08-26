@@ -1,45 +1,33 @@
 IMAGENS DO E-MAIL "PROMOÇÃO DAS CORES"
 =======================================
 
-7 arquivos, 473 KB no total (as originais somavam 2,4 MB — 82% menor).
-Todas já vêm cortadas, redimensionadas e com fundo branco puro (#FFFFFF),
-para encaixarem sem "caixa" visível nos cards brancos do e-mail.
+ARQUIVO                          TAMANHO     ONDE APARECE
+------------------------------   ---------   ----------------------------------
+hero-arte-promo.jpg              1200x1326   hero do topo (exibido a 600px)
+card-preto-brilhante.png         360x300     card 1 — isca Claw Strike
+card-amarelo-neon.png            360x300     card 2 — isca Lagartixa
+card-glow.png                    360x300     card 3 — isca AjiEgg
+card-branco-perola.png           360x300     card 4 — isca Vibraworm
+logo-footer.png                  260x106     rodapé (exibido a 130px)
 
-ARQUIVO                          TAMANHO   ONDE APARECE
-------------------------------   -------   ----------------------------------
-logo-header.png                  400x163   topo do e-mail (exibido a 200px)
-hero-viperbug-amarelo-neon.png   760x400   foto grande de destaque
-card-preto-brilhante.png         360x300   card 1 — isca Claw Strike
-card-amarelo-neon.png            360x300   card 2 — isca Lagartixa
-card-glow.png                    360x300   card 3 — isca AjiEgg
-card-branco-perola.png           360x300   card 4 — isca Vibraworm
-logo-footer.png                  260x106   rodapé (exibido a 130px)
+hero-arte-promo.jpg é a arte de Stories que você mandou
+(storie-promo-cores-set.png, 941x1672), cortada logo depois da tag
+"Amarelo Neon" — antes das 3 fotos menores de baixo, que o e-mail já
+recria como cards maiores e mais legíveis — e comprimida de 2,2MB
+(PNG) pra ~260KB (JPEG qualidade 80, é foto então comprime bem melhor
+que PNG). Arquivo em 2x (1200px) pra ficar nítido em tela retina,
+exibido a 600px no e-mail.
 
-Os logos já vêm achatados sobre o verde escuro #0a1410 (o fundo do e-mail),
-em vez de PNG transparente — assim nenhum cliente antigo de e-mail mostra
-caixa cinza ou preta atrás deles.
-
-
-COMO PUBLICAR
--------------
-
-Opção A (mais simples) — servir pelo domínio de vocês:
-  1. copie esta pasta para  public/email/promocao-cores/
-     no repo  catalogo-de-isca-V2-sem-preco
-  2. commit + push (GitHub Pages publica sozinho)
-  3. pronto: o HTML do e-mail já aponta para
-     https://iscas.chumbada.com.br/email/promocao-cores/
-
-Opção B — qualquer outro CDN ou a biblioteca de imagens do seu ESP:
-  suba os 7 arquivos e faça um localizar-e-substituir em
-  email-promocao-das-cores.html trocando
-     https://iscas.chumbada.com.br/email/promocao-cores/
-  pela URL base de onde ficaram.
+logo-header.png e hero-viperbug-amarelo-neon.png (versão anterior do
+e-mail, antes da arte real) ficaram na pasta mas não são mais
+referenciados pelo HTML — pode apagar se quiser, não afeta nada.
 
 
-ORIGEM
-------
-Fotos tiradas do catálogo de iscas (public/iscas_cores/ do repo
-catalogo-de-isca-V2-sem-preco). As 4 cores da promoção existem em todos
-os 67 modelos do catálogo, então dá pra trocar as iscas dos cards à
-vontade — basta pegar outra pasta e repetir o mesmo corte.
+PUBLICADO EM
+------------
+https://iscas.chumbada.com.br/email/promocao-cores/
+(repo catalogo-de-isca-V2-sem-preco, pasta public/email/promocao-cores/,
+GitHub Pages publica sozinho a cada push em master)
+
+Pra trocar de host: um localizar-e-substituir dessa URL base no
+email-promocao-das-cores.html.
