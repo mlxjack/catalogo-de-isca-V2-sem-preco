@@ -12,6 +12,7 @@ export default function ProductDetails() {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState({});
   const [currentVariant, setCurrentVariant] = useState(null);
+  const [selecaoQty, setSelecaoQty] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -247,6 +248,20 @@ export default function ProductDetails() {
     return `https://wa.me/5511941900602?text=${encodeURIComponent(text)}`;
   };
 
+  const handleAddToSelecao = () => {
+    if (!window.MinhaSelecao || !currentVariant) return;
+    const variant = Object.entries(selectedOptions).map(([k, v]) => `${k}: ${v}`).join(', ');
+    window.MinhaSelecao.addItem({
+      catalog: 'iscas',
+      productId: product.id,
+      name: product.title,
+      sku: currentVariant.sku || null,
+      variant,
+      qty: selecaoQty,
+    });
+    setSelecaoQty(1);
+  };
+
   const buildSpecs = () => {
     if (!product) return [];
     
@@ -480,18 +495,10 @@ export default function ProductDetails() {
               </table>
             </div>
 
-            {/* Description */}
-            {product.description && (
-              <div className="info-section">
-                <h2 className="info-section-title">Descrição</h2>
-                <div className="info-desc" dangerouslySetInnerHTML={{ __html: product.description }} />
-              </div>
-            )}
-
             {/* CTA Actions */}
             <div className="detail-actions">
-              <button 
-                className="btn btn-primary btn-whatsapp" 
+              <button
+                className="btn btn-primary btn-whatsapp"
                 onClick={() => window.open(getWhatsAppLink(), '_blank', 'noopener noreferrer')}
                 type="button"
               >
@@ -500,6 +507,22 @@ export default function ProductDetails() {
                 </svg>
                 Solicitar via WhatsApp
               </button>
+
+              <div className="selecao-add-row">
+                <div className="selecao-qty-stepper">
+                  <button type="button" onClick={() => setSelecaoQty((q) => Math.max(1, q - 1))} aria-label="Diminuir quantidade">−</button>
+                  <span>{selecaoQty}</span>
+                  <button type="button" onClick={() => setSelecaoQty((q) => q + 1)} aria-label="Aumentar quantidade">+</button>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={!currentVariant}
+                  onClick={handleAddToSelecao}
+                >
+                  Adicionar à Minha Seleção
+                </button>
+              </div>
 
               <div className="action-row">
                 <a href="https://chumbadas.com.br" target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
@@ -510,6 +533,14 @@ export default function ProductDetails() {
                 </Link>
               </div>
             </div>
+
+            {/* Description */}
+            {product.description && (
+              <div className="info-section">
+                <h2 className="info-section-title">Descrição</h2>
+                <div className="info-desc" dangerouslySetInnerHTML={{ __html: product.description }} />
+              </div>
+            )}
           </section>
         </div>
       </main>
