@@ -3,13 +3,24 @@ import { Link } from 'react-router-dom';
 import { getColorImage } from '../utils/colorHelper';
 import { getVariedCoverImage } from '../utils/lureColorImages';
 import { getLureShapeCategoryLabel } from '../utils/lureShapeCategories';
+import { getColorDiscountPct, getProductMaxDiscountPct } from '../utils/blackNovember';
 
 export default function ProductCard({ product }) {
   const mainImage = getVariedCoverImage(product) || product.images[0] || `${import.meta.env.BASE_URL}logo.png`;
   
+  const productColors = product.options['Cor'] || [];
+  const maxDiscount = getProductMaxDiscountPct(product.id, productColors);
+  // A previa mostra so 8 cores: durante a Black November as cores com desconto vem primeiro.
+  const previewColors = maxDiscount
+    ? [...productColors.filter((c) => getColorDiscountPct(c, product.id) > 0), ...productColors.filter((c) => getColorDiscountPct(c, product.id) === 0)]
+    : productColors;
+
   return (
     <article className="product-card">
       <div className="product-card-media">
+        {maxDiscount > 0 && (
+          <span className="bn-ribbon">{maxDiscount >= 30 ? `até -${maxDiscount}%` : `-${maxDiscount}%`}</span>
+        )}
         <Link to={`/product/${product.id}`}>
           <img 
             src={mainImage} 
@@ -32,14 +43,15 @@ export default function ProductCard({ product }) {
         {product.options['Cor'] && product.options['Cor'].length > 0 && (
           <div className="product-card-previews">
             <div className="card-swatches" aria-label="Cores disponíveis">
-              {product.options['Cor'].slice(0, 8).map(color => {
+              {previewColors.slice(0, 8).map(color => {
                 const imgUrl = getColorImage(color);
+                const pct = getColorDiscountPct(color, product.id);
                 return (
                   <span 
                     key={color} 
-                    className="card-swatch" 
+                    className={`card-swatch${pct ? ` bn-swatch-promo` : ``}`} 
                     style={imgUrl ? { backgroundImage: `url("${encodeURI(imgUrl)}")` } : { backgroundColor: '#e2e8f0' }} 
-                    title={color}
+                    title={pct ? `${color} — ${pct}% OFF` : color}
                   />
                 );
               })}
