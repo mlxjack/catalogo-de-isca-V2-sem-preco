@@ -9,14 +9,14 @@ import { BLACK_NOVEMBER_30 } from './blackNovember30';
 const normalize = (str) =>
   (str || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
 
-const COLORS_12 = new Set(['Vermelho Holográfico', 'Véu da Noite', 'Pastel', 'Preto Brilhante'].map(normalize));
+const COLORS_12 = new Set(['Vermelho Holográfico', 'Véu da Noite', 'Pastel', 'Chá/Pastel', 'Preto Brilhante'].map(normalize));
 const BN_30_NORM = Object.fromEntries(
   Object.entries(BLACK_NOVEMBER_30).map(([h, cs]) => [h, new Set(cs.map(normalize))])
 );
 // As 13 cores padrao do seletor (ver csvParser.js); as demais da lista de 30% sao "fora de padrao".
 const STANDARD_COLORS = new Set(
   ['Branco Perola', 'Glow', 'Rapadura', 'Roxo Estrelar', 'Vermelho Holográfico', 'Véu Da Noite', 'Amarelo Neon',
-    'Laranja Neon', 'Preto Brilhante', 'Capim Rubi', 'Verde Neon', 'Pastel', 'Chá'].map(normalize)
+    'Laranja Neon', 'Preto Brilhante', 'Capim Rubi', 'Verde Neon', 'Pastel', 'Chá', 'Chá/Pastel'].map(normalize)
 );
 
 export const isBlackNovemberActive = () =>
@@ -26,7 +26,9 @@ export const isBlackNovemberActive = () =>
 export const getColorDiscountPct = (colorName, productId) => {
   if (!isBlackNovemberActive()) return 0;
   const n = normalize(colorName);
-  if (productId && BN_30_NORM[productId] && BN_30_NORM[productId].has(n)) return 30;
+  // 'Chá/Pastel' (cor unificada na loja) herda a regra de 'Chá' e de 'Pastel'.
+  const keys = n === 'chapastel' ? ['chapastel', 'pastel', 'cha'] : [n];
+  if (productId && BN_30_NORM[productId] && keys.some((k) => BN_30_NORM[productId].has(k))) return 30;
   return COLORS_12.has(n) ? 12 : 0;
 };
 
