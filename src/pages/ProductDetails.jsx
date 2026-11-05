@@ -272,12 +272,7 @@ export default function ProductDetails() {
     });
   };
 
-  // cor que ja existe como variacao no seletor nao se repete no bloco "fora de padrao"
-  const offPatternColors = getOffPatternColors(product.id).filter(
-    (c) => !Object.entries(product.options).some(
-      ([k, vals]) => /cor|color/i.test(k) && vals.some((v) => normalizeOpt2(v) === normalizeOpt2(c))
-    )
-  );
+  const offPatternColors = getOffPatternColors(product.id);
 
   const handleOffColor = (c) => {
     const next = offColor === c ? null : c;
